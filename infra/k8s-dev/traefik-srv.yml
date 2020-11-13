@@ -1,0 +1,50 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: traefik-ingress-controller
+
+---
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: traefik-depl
+  labels:
+    app: traefik
+
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: traefik
+  template:
+    metadata:
+      labels:
+        app: traefik
+    spec:
+      serviceAccountName: traefik-ingress-controller
+      containers:
+        - name: traefik
+          image: traefik
+          args:
+            - --entrypoints.web.address=:80
+            - --providers.kubernetesingress
+          ports:
+            - name: web
+              containerPort: 80
+            - name: admin
+              containerPort: 8080
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: traefik-srv
+spec:
+  type: LoadBalancer
+  selector:
+    app: traefik
+  ports:
+    - protocol: TCP
+      port: 80
+      name: web
+      targetPort: 80

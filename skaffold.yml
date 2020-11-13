@@ -17,3 +17,11 @@ build:
         manual:
           - src: 'src/**/*.ts'
             dest: .
+    - image: bk7987/opuscm-submittals
+      context: submittals
+      docker:
+        dockerfile: Dockerfile.dev
+      sync:
+        manual:
+          - src: 'src/**/*.py'
+            dest: .

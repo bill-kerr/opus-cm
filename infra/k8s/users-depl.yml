@@ -6,12 +6,25 @@ spec:
   replicas: 1
   selector:
     matchLabels:
-      component: users
+      app: users
   template:
     metadata:
       labels:
-        component: users
+        app: users
     spec:
       containers:
         - name: users
           image: bk7987/opuscm-users
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: users-srv
+spec:
+  selector:
+    app: users
+  ports:
+    - name: users
+      protocol: TCP
+      port: 3000
+      targetPort: 3000

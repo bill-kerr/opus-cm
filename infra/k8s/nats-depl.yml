@@ -6,11 +6,11 @@ spec:
   replicas: 1
   selector:
     matchLabels:
-      component: nats
+      app: nats
   template:
     metadata:
       labels:
-        component: nats
+        app: nats
     spec:
       containers:
         - name: nats
@@ -38,7 +38,7 @@ metadata:
   name: nats-srv
 spec:
   selector:
-    component: nats
+    app: nats
   ports:
     - name: client
       protocol: TCP
