@@ -1,0 +1,32 @@
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: notifications-depl
+  labels:
+    app: notifications
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: notifications
+  template:
+    metadata:
+      labels:
+        app: notifications
+    spec:
+      containers:
+        - name: notifications
+          image: bk7987/opuscm-notifications
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: notifications-srv
+spec:
+  selector:
+    app: notifications
+  ports:
+    - name: notifications
+      protocol: TCP
+      port: 3000
+      targetPort: 3000

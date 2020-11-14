@@ -3,6 +3,7 @@ kind: Config
 deploy:
   kubectl:
     manifests:
+      - ./infra/k8s/traefik-crd.yml
       - ./infra/k8s/*
       - ./infra/k8s-dev/*
 build:
@@ -24,4 +25,12 @@ build:
       sync:
         manual:
           - src: 'src/**/*.py'
+            dest: .
+    - image: bk7987/opuscm-notifications
+      context: notifications
+      docker:
+        dockerfile: dev.Dockerfile
+      sync:
+        manual:
+          - src: 'src/**/*.go'
             dest: .
