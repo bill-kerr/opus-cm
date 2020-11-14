@@ -10,7 +10,12 @@ app = FastAPI()
 
 @app.get("/")
 def read_root():
-    return {"message": "Hello, world!"}
+    return {"message": "this is the root route of submittals"}
+
+
+@app.get("/submittals")
+def read_submittals():
+    return {"message": "this is the submittals endpoint"}
 
 
 print(__name__)

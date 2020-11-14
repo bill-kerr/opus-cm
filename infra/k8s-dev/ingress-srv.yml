@@ -4,6 +4,7 @@ metadata:
   name: ingress-service
   annotations:
     traefik.ingress.kubernetes.io/router.entrypoints: web
+    traefik.ingress.kubernetes.io/router.middlewares: default-stripprefix@kubernetescrd
 spec:
   rules:
     - host: opuscm.com
@@ -13,38 +14,16 @@ spec:
             backend:
               serviceName: users-srv
               servicePort: 3000
-          - path: /submittals
+          - path: /api/submittals
             backend:
               serviceName: submittals-srv
               servicePort: 3000
-          - path: /foo
-            backend:
-              serviceName: whoami
-              servicePort: 80
-          - path: /admin
-            backend:
-              serviceName: traefik-admin-srv
-              servicePort: 80
-#
-#
-# INGRESS-NGINX config
-# apiVersion: extensions/v1beta1
-# kind: Ingress
-# metadata:
-#   name: ingress-service
-#   annotations:
-#     kubernetes.io/ingress.class: nginx
-#     nginx.ingress.kubernetes.io/use-regex: 'true'
-# spec:
-#   rules:
-#     - host: opuscm.dev
-#       http:
-#         paths:
-#           - path: /api/users/?(.*)
-#             backend:
-#               serviceName: users-srv
-#               servicePort: 3000
-#           - path: /api/submittals/?(.*)
-#             backend:
-#               serviceName: submittals-srv
-#               servicePort: 3000
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: Middleware
+metadata:
+  name: stripprefix
+spec:
+  stripPrefixRegex:
+    regex:
+      - /api/?(.*)
