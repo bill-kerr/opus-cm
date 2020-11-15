@@ -16,6 +16,9 @@ async function start() {
     console.error(error);
   }
 
+  const subscription = natsWrapper.client.subscribe('test');
+  subscription.on('message', msg => console.log(msg.getData()));
+
   app.listen(3000, () => console.log('Users service listening on port 3000.'));
 }
 
