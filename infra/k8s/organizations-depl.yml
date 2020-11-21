@@ -1,0 +1,32 @@
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: organizations-depl
+  labels:
+    app: organizations
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: organizations
+  template:
+    metadata:
+      labels:
+        app: organizations
+    spec:
+      containers:
+        - name: organizations
+          image: bk7987/opuscm-organizations
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: organizations-srv
+spec:
+  selector:
+    app: organizations
+  ports:
+    - name: organizations
+      protocol: TCP
+      port: 3000
+      targetPort: 3000

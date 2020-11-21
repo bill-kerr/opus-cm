@@ -22,6 +22,10 @@ spec:
             backend:
               serviceName: notifications-srv
               servicePort: 3000
+          - path: /api/organizations
+            backend:
+              serviceName: organizations-srv
+              servicePort: 3000
 ---
 apiVersion: traefik.containo.us/v1alpha1
 kind: Middleware
