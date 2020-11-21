@@ -26,7 +26,17 @@ func main() {
 	}
 	testListener.Listen()
 
+	app.Use(nats.ClientProvider(sc))
+
 	app.Get("/", func(c *fiber.Ctx) error {
+		pub := events.Publisher{
+			Subject: "test",
+			Client: nats.GetClient(c),
+			Serializer: events.OrganizationCreatedSerializer{
+				OrganizationName: "test_name",
+			},
+		}
+		pub.Publish()
 		return c.JSON(fiber.Map{"message": "this is the root route of the organizations service"})
 	})
 
