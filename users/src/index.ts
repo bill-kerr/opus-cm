@@ -1,8 +1,14 @@
 import express from 'express';
+import helmet from 'helmet';
+import cors from 'cors';
+import { json } from 'body-parser';
 import { natsWrapper } from './nats-wrapper';
 
 async function start() {
   const app = express();
+  app.use(helmet());
+  app.use(cors());
+  app.use(json());
 
   app.get('/users', (req, res) => {
     console.log(req.url, req.baseUrl, req.originalUrl);
