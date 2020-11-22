@@ -34,4 +34,4 @@ metadata:
 spec:
   stripPrefixRegex:
     regex:
-      - /api/?(.*)
+      - \/api\/.*?\/

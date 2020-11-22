@@ -9,7 +9,10 @@ import (
 
 	"opus-cm/organizations/src/events"
 	"opus-cm/organizations/src/nats"
+	"opus-cm/organizations/src/routes"
 )
+
+// TODO: need to implement disconnet on SIGTERM/SIGINT to avoid clientID duplicate registrations
 
 func main() {
 	app := fiber.New()
@@ -29,16 +32,10 @@ func main() {
 	app.Use(nats.ClientProvider(sc))
 
 	app.Get("/", func(c *fiber.Ctx) error {
-		pub := events.Publisher{
-			Subject: "test",
-			Client: nats.GetClient(c),
-			Serializer: events.OrganizationCreatedSerializer{
-				OrganizationName: "test_name",
-			},
-		}
-		pub.Publish()
 		return c.JSON(fiber.Map{"message": "this is the root route of the organizations service"})
 	})
+
+	app.Post("/new", routes.CreateOrganization)
 
 	app.Listen(":3000")
 }

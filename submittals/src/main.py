@@ -9,10 +9,11 @@ app = FastAPI()
 
 @app.on_event('startup')
 async def startup():
-    loop = asyncio.get_event_loop()
-    client = NatsClient(loop)
-    await client.connect()
-    await client.subscribe(on_message)
+    # loop = asyncio.get_event_loop()
+    # client = NatsClient(loop)
+    # await client.connect()
+    # await client.subscribe(on_message)
+    pass
 
 
 @app.get("/submittals")
