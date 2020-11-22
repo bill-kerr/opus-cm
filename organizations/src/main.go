@@ -35,6 +35,10 @@ func main() {
 		return c.JSON(fiber.Map{"message": "this is the root route of the organizations service"})
 	})
 
+	app.Get("/test", func(c *fiber.Ctx) error {
+		return c.JSON(fiber.Map{"test": "this works"})
+	})
+
 	app.Post("/new", routes.CreateOrganization)
 
 	app.Listen(":3000")

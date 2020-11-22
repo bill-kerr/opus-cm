@@ -10,9 +10,9 @@ type ErrorResponse struct {
 
 // MultiErrorResponse is the schema for data that is returned when multiple errors occur.
 type MultiErrorResponse struct {
-	Object     string `json:"object"`
-	Name       string `json:"name"`
-	StatusCode int `json:"statusCode"`
+	Object     string        `json:"object"`
+	Name       string        `json:"name"`
+	StatusCode int           `json:"statusCode"`
 	Details    []ErrorDetail `json:"details"`
 }
 
@@ -46,8 +46,8 @@ func NewMultiErrorResponse(name string, statusCode int, details []ErrorDetail) M
 // NewErrorDetail creates a new ErrorDetail object.
 func NewErrorDetail(name, details string) ErrorDetail {
 	return ErrorDetail{
-		Object: "error-detail",
-		Name: name,
+		Object:  "error-detail",
+		Name:    name,
 		Details: details,
 	}
 }

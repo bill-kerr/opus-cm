@@ -19,15 +19,15 @@ func CreateOrganization(ctx *fiber.Ctx) error {
 
 	ID, _ := uuid.NewV4()
 	org := models.Organization{
-		ID: ID.String(),
-		Name: "this is the org name",
+		ID:      ID.String(),
+		Name:    "this is the org name",
 		Version: 1,
 	}
 	publisher := events.Publisher{
 		Subject: "test",
-		Client: nats.GetClient(ctx),
-		Object: org,
+		Client:  nats.GetClient(ctx),
+		Object:  org,
 	}
 	publisher.Publish()
-  return ctx.Status(201).JSON(org)
+	return ctx.Status(201).JSON(org)
 }
