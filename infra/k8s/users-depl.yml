@@ -15,6 +15,17 @@ spec:
       containers:
         - name: users
           image: bk7987/opuscm-users
+          volumeMounts:
+            - name: firebase-config
+              mountPath: '/app/secrets'
+              readOnly: true
+          env:
+            - name: GOOGLE_APPLICATION_CREDENTIALS
+              value: './secrets/firebase-admin-config.json'
+      volumes:
+        - name: firebase-config
+          secret:
+            secretName: firebase-config
 ---
 apiVersion: v1
 kind: Service

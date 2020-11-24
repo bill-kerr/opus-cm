@@ -3,12 +3,19 @@ import helmet from 'helmet';
 import cors from 'cors';
 import { json } from 'body-parser';
 import { natsWrapper } from './nats-wrapper';
+import { initializeFirebase } from './auth';
+import { router } from './routes';
 
 async function start() {
   const app = express();
   app.use(helmet());
   app.use(cors());
   app.use(json());
+
+  initializeFirebase();
+  console.log(process.env.GOOGLE_APPLICATION_CREDENTIALS);
+
+  app.use(router);
 
   app.get('/users', (req, res) => {
     console.log(req.url, req.baseUrl, req.originalUrl);
