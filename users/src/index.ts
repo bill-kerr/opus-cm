@@ -1,10 +1,12 @@
 import express from 'express';
 import helmet from 'helmet';
 import cors from 'cors';
+import 'express-async-errors';
 import { json } from 'body-parser';
 import { natsWrapper } from './nats-wrapper';
 import { initializeFirebase } from './auth';
 import { router } from './routes';
+import { errorHandler } from './errors/error-handler';
 
 async function start() {
   const app = express();
@@ -13,7 +15,6 @@ async function start() {
   app.use(json());
 
   initializeFirebase();
-  console.log(process.env.GOOGLE_APPLICATION_CREDENTIALS);
 
   app.use(router);
 
@@ -32,6 +33,7 @@ async function start() {
   const subscription = natsWrapper.client.subscribe('test');
   subscription.on('message', msg => console.log(msg.getData()));
 
+  app.use(errorHandler);
   app.listen(3000, () => console.log('Users service listening on port 3000.'));
 }
 
