@@ -1,7 +1,13 @@
 import firebase from 'firebase-admin';
 import { v4 } from 'uuid';
+import { BadRequestError, InternalServerError, ValidationError } from './errors/errors';
 import { Role } from './models/role';
 import { User, UserClaims } from './models/user';
+
+interface FirebaseError {
+  errorInfo: { code: string; message: string };
+  codePrefix: string;
+}
 
 export function initializeFirebase() {
   firebase.initializeApp({
@@ -10,20 +16,19 @@ export function initializeFirebase() {
   console.log('Users Service connected to Firebase.');
 }
 
-export async function createUser(email: string, password: string): Promise<User | null> {
-  try {
-    const userRecord = await firebase.auth().createUser({ email, password, uid: v4() });
-    return mapUser(userRecord);
-  } catch (error) {
-    return null;
-  }
+export async function createUser(email: string, password: string): Promise<User> {
+  const userRecord = await firebase
+    .auth()
+    .createUser({ email, password, uid: v4() })
+    .catch(error => handleAuthError(error));
+  return mapUser(userRecord || null);
 }
 
 export async function setRole(userId: string, role: Role): Promise<boolean> {
   try {
     await firebase.auth().setCustomUserClaims(userId, { role });
   } catch (error) {
-    console.error(error);
+    handleAuthError(error);
     return false;
   }
   return true;
@@ -34,11 +39,11 @@ export async function getClaims(userId: string) {
   return mapClaims(user.customClaims);
 }
 
-function mapUser(userRecord: firebase.auth.UserRecord): User {
-  return {
-    id: userRecord.uid,
-    email: userRecord.email || '',
-  };
+function mapUser(userRecord: firebase.auth.UserRecord | undefined | null): User {
+  const user = new User();
+  user.id = userRecord?.uid || '';
+  user.email = userRecord?.email || '';
+  return user;
 }
 
 function mapClaims(claims: { [key: string]: any } | undefined): UserClaims {
@@ -47,4 +52,15 @@ function mapClaims(claims: { [key: string]: any } | undefined): UserClaims {
   }
   const role = claims.role as Role;
   return { role };
+}
+
+function handleAuthError(error: FirebaseError) {
+  switch (error.errorInfo.code) {
+    case 'auth/email-already-exists':
+      throw new BadRequestError('A user with that email already exists.');
+    case 'auth/invalid-email':
+      throw new BadRequestError('Invalid email address.');
+    default:
+      throw new InternalServerError();
+  }
 }

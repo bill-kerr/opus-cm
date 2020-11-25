@@ -1,7 +1,8 @@
 import { IsEmail, Length } from 'class-validator';
 import { Role } from './role';
 
-export interface User {
+export class User {
+  object = 'user';
   id: string;
   email: string;
 }
@@ -11,9 +12,15 @@ export interface UserClaims {
 }
 
 export class UserCreate {
-  @IsEmail()
+  @IsEmail({}, { message: 'The email field must contain a valid email.' })
   email: string;
 
-  @Length(6)
+  @Length(6, undefined, { message: 'Passwords must be at least 6 characters long.' })
   password: string;
+}
+
+export class UserRead {
+  object: 'user';
+  id: string;
+  email: string;
 }

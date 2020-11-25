@@ -3,11 +3,13 @@ import { createUser, getClaims, setRole } from './auth';
 import { InternalServerError } from './errors/errors';
 import { UserCreatedPublisher, UserRoleChangedPublisher } from './events/publishers';
 import { Role } from './models/role';
+import { UserCreate } from './models/user';
 import { natsWrapper } from './nats-wrapper';
+import { validateBody } from './validators';
 
 const router = express.Router();
 
-router.post('/', async (req, res) => {
+router.post('/', validateBody(UserCreate), async (req, res) => {
   const user = await createUser(req.body.email, req.body.password);
   if (!user) {
     throw new InternalServerError();

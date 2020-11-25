@@ -1,5 +1,6 @@
 export abstract class BaseError extends Error {
-  abstract statusCode: number;
+  public abstract statusCode: number;
+  public abstract details: string | ErrorDetail[];
 
   constructor(message: string) {
     super(message);
@@ -11,7 +12,7 @@ export interface ErrorResponse {
   object: 'error';
   name: string;
   statusCode: number;
-  details: ErrorDetail | string;
+  details: ErrorDetail[] | string;
 }
 
 export interface ErrorDetail {

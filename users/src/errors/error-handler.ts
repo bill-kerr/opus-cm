@@ -14,7 +14,7 @@ export function errorHandler(err: Error, req: Request, res: Response, _next: Nex
       object: 'error',
       name: err.name,
       statusCode: err.statusCode,
-      details: 'Error details go here',
+      details: err.details,
     };
     return res.status(err.statusCode).json(errorResponse);
   }
