@@ -22,10 +22,10 @@ func main() {
 	testHandler := &testHandler{}
 	testListener := &events.Listener{
 		QueueGroupName: "organizations-service",
-		AckWait: time.Duration(5) * time.Second,
-		Client: sc,
-		Subject: "test",
-		Handler: testHandler,
+		AckWait:        time.Duration(5) * time.Second,
+		Client:         sc,
+		Subject:        "user:created",
+		Handler:        testHandler,
 	}
 	testListener.Listen()
 
@@ -44,7 +44,7 @@ func main() {
 	app.Listen(":3000")
 }
 
-type testHandler struct {}
+type testHandler struct{}
 
 // Parse implements the MessageHandler interface
 func (t *testHandler) Parse(msg *stan.Msg) {

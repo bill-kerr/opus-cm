@@ -1,0 +1,5 @@
+export enum Role {
+  SYS_ADMIN = 'SYS_ADMIN',
+  PROJECT_ADMIN = 'PROJ_ADMIN',
+  PROJECT_USER = 'PROJ_USER',
+}

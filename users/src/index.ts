@@ -2,6 +2,7 @@ import express from 'express';
 import helmet from 'helmet';
 import cors from 'cors';
 import 'express-async-errors';
+import 'reflect-metadata';
 import { json } from 'body-parser';
 import { natsWrapper } from './nats-wrapper';
 import { initializeFirebase } from './auth';
