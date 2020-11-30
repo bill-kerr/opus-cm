@@ -7,7 +7,7 @@ export interface Event {
 }
 
 export interface RoleChange {
-  userId: string;
+  id: string;
   role: Role;
 }
 

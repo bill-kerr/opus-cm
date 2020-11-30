@@ -31,7 +31,7 @@ router.post('/superuser', async (req, res) => {
     throw new InternalServerError();
   }
   await new UserRoleChangedPublisher(natsWrapper.client).publish({
-    userId,
+    id: userId,
     role: Role.SYS_ADMIN,
   });
   res.sendStatus(200);
