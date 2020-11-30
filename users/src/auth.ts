@@ -2,11 +2,15 @@ import firebase from 'firebase-admin';
 import { v4 } from 'uuid';
 import { BadRequestError, InternalServerError, ValidationError } from './errors/errors';
 import { Role } from './models/role';
-import { User, UserClaims } from './models/user';
+import { User } from './models/user';
 
 interface FirebaseError {
   errorInfo: { code: string; message: string };
   codePrefix: string;
+}
+
+interface UserClaims {
+  role: Role;
 }
 
 export function initializeFirebase() {
@@ -17,11 +21,14 @@ export function initializeFirebase() {
 }
 
 export async function createUser(email: string, password: string): Promise<User> {
-  const userRecord = await firebase
-    .auth()
-    .createUser({ email, password, uid: v4() })
-    .catch(error => handleAuthError(error));
-  return mapUser(userRecord || null);
+  try {
+    const userRecord = await firebase.auth().createUser({ email, password, uid: v4() });
+    await setRole(userRecord.uid, Role.PROJECT_USER);
+    return mapUser(userRecord || null);
+  } catch (error) {
+    handleAuthError(error);
+    return mapUser(null);
+  }
 }
 
 export async function setRole(userId: string, role: Role): Promise<boolean> {
@@ -39,10 +46,11 @@ export async function getClaims(userId: string) {
   return mapClaims(user.customClaims);
 }
 
-function mapUser(userRecord: firebase.auth.UserRecord | undefined | null): User {
+async function mapUser(userRecord: firebase.auth.UserRecord | undefined | null): Promise<User> {
   const user = new User();
   user.id = userRecord?.uid || '';
   user.email = userRecord?.email || '';
+  user.role = (await getClaims(user.id)).role;
   return user;
 }
 

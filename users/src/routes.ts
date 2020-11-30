@@ -1,21 +1,24 @@
 import express from 'express';
+import { classToClass, classToPlain } from 'class-transformer';
 import { createUser, getClaims, setRole } from './auth';
 import { InternalServerError } from './errors/errors';
 import { UserCreatedPublisher, UserRoleChangedPublisher } from './events/publishers';
 import { Role } from './models/role';
-import { UserCreate } from './models/user';
+import { User } from './models/user';
 import { natsWrapper } from './nats-wrapper';
 import { validateBody } from './validators';
 
 const router = express.Router();
 
-router.post('/', validateBody(UserCreate), async (req, res) => {
+router.post('/', validateBody(User, ['create']), async (req, res) => {
   const user = await createUser(req.body.email, req.body.password);
   if (!user) {
     throw new InternalServerError();
   }
-  await new UserCreatedPublisher(natsWrapper.client).publish(user);
-  res.status(201).json(user);
+  await new UserCreatedPublisher(natsWrapper.client).publish(
+    classToPlain(user, { groups: ['event'] })
+  );
+  res.status(201).json(classToPlain(user, { groups: ['http'] }));
 });
 
 router.post('/superuser', async (req, res) => {
