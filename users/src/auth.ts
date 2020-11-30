@@ -1,6 +1,7 @@
+import { NextFunction, Request, Response } from 'express';
 import firebase from 'firebase-admin';
 import { v4 } from 'uuid';
-import { BadRequestError, InternalServerError, ValidationError } from './errors/errors';
+import { BadRequestError, InternalServerError, NotAuthorizedError } from './errors/errors';
 import { Role } from './models/role';
 import { User } from './models/user';
 
@@ -44,6 +45,34 @@ export async function setRole(userId: string, role: Role): Promise<boolean> {
 export async function getClaims(userId: string) {
   const user = await firebase.auth().getUser(userId);
   return mapClaims(user.customClaims);
+}
+
+export async function requireAuth(req: Request, _res: Response, next: NextFunction) {
+  const authHeader = req.headers.authorization;
+  if (!authHeader) {
+    throw new NotAuthorizedError('The Authorization header must be set.');
+  }
+
+  const [bearer, authToken] = authHeader.split(' ');
+  if (bearer !== 'Bearer') {
+    throw new NotAuthorizedError(
+      "The Authorization header must be formatted as 'Bearer <token>' where <token> is a valid auth key."
+    );
+  }
+
+  let user;
+  try {
+    user = await firebase.auth().verifyIdToken(authToken);
+  } catch (err) {
+    throw new NotAuthorizedError(err.errorInfo.message);
+  }
+
+  if (!user) {
+    throw new NotAuthorizedError('You are not authorized to access this resource.');
+  }
+
+  req.userId = user.uid;
+  next();
 }
 
 async function mapUser(userRecord: firebase.auth.UserRecord | undefined | null): Promise<User> {

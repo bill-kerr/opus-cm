@@ -56,3 +56,13 @@ export class BadRequestError extends BaseError {
     Object.setPrototypeOf(this, BadRequestError.prototype);
   }
 }
+
+export class NotAuthorizedError extends BaseError {
+  statusCode = 403;
+  name = 'Not authorized error';
+
+  constructor(public details: string) {
+    super(details);
+    Object.setPrototypeOf(this, NotAuthorizedError.prototype);
+  }
+}

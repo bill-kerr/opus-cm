@@ -27,7 +27,17 @@ Below is a table of events, with their subjects and payload structures.
 | user:updated | ``` User ```
 | user:role_changed | ``` { id: uuid, role: Role } ```
 
+## **HTTP Responses**
 
+Responses returned to users are to be labelled with the Content-Type ```application/json```. Response shapes across services must conform to the same naming conventions and basic data structure. Below is a list of response types and the required shape of the response data.
+
+## **Errors**
+
+Like successful HTTP responses, returned errors must conform to a common definition. Below is the list of errors and their data shapes.
+
+| Error | Status Code | Data |
+| ----- | ----------- | ---- |
+| Internal Server Error | 500 | <code>{<br>&nbsp;&nbsp;object: 'error',<br>&nbsp;&nbsp;name: 'Internal server error', <br>&nbsp;&nbsp;details: 'An unknown error occurred.'<br>}</code>
 
 
 <!-- prettier-ignore-end -->

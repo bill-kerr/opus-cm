@@ -1,6 +1,6 @@
 import express from 'express';
 import { classToClass, classToPlain } from 'class-transformer';
-import { createUser, getClaims, setRole } from './auth';
+import { createUser, getClaims, requireAuth, setRole } from './auth';
 import { InternalServerError } from './errors/errors';
 import { UserCreatedPublisher, UserRoleChangedPublisher } from './events/publishers';
 import { Role } from './models/role';
@@ -21,7 +21,7 @@ router.post('/', validateBody(User, ['create']), async (req, res) => {
   res.status(201).json(classToPlain(user, { groups: ['http'] }));
 });
 
-router.post('/superuser', async (req, res) => {
+router.post('/superuser', requireAuth, async (req, res) => {
   const userId: string = req.body.id;
 
   const claims = await getClaims(userId);
