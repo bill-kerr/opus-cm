@@ -15,7 +15,7 @@ It is necessary to define common data structures that each service can understan
 | Type | Structure |
 | --------- | --------- |
 | User | ``` { id: uuid, email: string, role: Role } ```
-| Role | ``` "SYS_ADMIN" || "PRJ_ADMIN" || "PRJ_USER" ```
+| Role | ``` SYS_ADMIN, PRJ_ADMIN, PRJ_USER (default) ```
 
 ### **Event List**
 
@@ -37,7 +37,7 @@ Like successful HTTP responses, returned errors must conform to a common definit
 
 | Error | Status Code | Data |
 | ----- | ----------- | ---- |
-| Internal Server Error | 500 | <code>{<br>&nbsp;&nbsp;object: 'error',<br>&nbsp;&nbsp;name: 'Internal server error', <br>&nbsp;&nbsp;details: 'An unknown error occurred.'<br>}</code>
+| Internal Server Error | 500 | <code>{<br />&nbsp;&nbsp;object: 'error',<br />&nbsp;&nbsp;name: 'Internal server error', <br />&nbsp;&nbsp;details: 'An unknown error occurred.'<br />}</code>
 
 
 <!-- prettier-ignore-end -->
