@@ -57,12 +57,12 @@ export class BadRequestError extends BaseError {
   }
 }
 
-export class NotAuthorizedError extends BaseError {
-  statusCode = 403;
-  name = 'Not authorized error';
+export class UnauthorizedError extends BaseError {
+  statusCode = 401;
+  name = 'Unauthorized error';
 
   constructor(public details: string) {
     super(details);
-    Object.setPrototypeOf(this, NotAuthorizedError.prototype);
+    Object.setPrototypeOf(this, UnauthorizedError.prototype);
   }
 }

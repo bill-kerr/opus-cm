@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
 import firebase from 'firebase-admin';
 import { v4 } from 'uuid';
-import { BadRequestError, InternalServerError, NotAuthorizedError } from './errors/errors';
+import { BadRequestError, InternalServerError, UnauthorizedError } from './errors/errors';
 import { Role } from './models/role';
 import { User } from './models/user';
 
@@ -50,12 +50,12 @@ export async function getClaims(userId: string) {
 export async function requireAuth(req: Request, _res: Response, next: NextFunction) {
   const authHeader = req.headers.authorization;
   if (!authHeader) {
-    throw new NotAuthorizedError('The Authorization header must be set.');
+    throw new UnauthorizedError('The Authorization header must be set.');
   }
 
   const [bearer, authToken] = authHeader.split(' ');
   if (bearer !== 'Bearer') {
-    throw new NotAuthorizedError(
+    throw new UnauthorizedError(
       "The Authorization header must be formatted as 'Bearer <token>' where <token> is a valid auth key."
     );
   }
@@ -64,11 +64,11 @@ export async function requireAuth(req: Request, _res: Response, next: NextFuncti
   try {
     user = await firebase.auth().verifyIdToken(authToken);
   } catch (err) {
-    throw new NotAuthorizedError(err.errorInfo.message);
+    throw new UnauthorizedError('The provided authentication token is not valid.');
   }
 
   if (!user) {
-    throw new NotAuthorizedError('You are not authorized to access this resource.');
+    throw new UnauthorizedError('You are not authorized to access this resource.');
   }
 
   req.userId = user.uid;
