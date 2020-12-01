@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: organizations-db-depl
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: organizations-db
+  template:
+    metadata:
+      labels:
+        app: organizations-db
+    spec:
+      containers:
+        - name: organizations-db
+          image: postgres:alpine
+          env:
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: pg-password
+                  key: PG_PASSWORD
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: pg-user
+                  key: PG_USER
+            - name: POSTGRES_DB
+              value: 'organizations'
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: organizations-db-srv
+spec:
+  selector:
+    app: organizations-db
+  ports:
+    - name: db
+      protocol: TCP
+      port: 5432
+      targetPort: 5432

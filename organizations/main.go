@@ -2,27 +2,33 @@ package main
 
 import (
 	"fmt"
-	"time"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/nats-io/stan.go"
 
-	"opus-cm/organizations/src/events"
-	"opus-cm/organizations/src/nats"
-	"opus-cm/organizations/src/routes"
+	"opus-cm/organizations/config"
+	"opus-cm/organizations/events"
+	"opus-cm/organizations/nats"
+	"opus-cm/organizations/routes"
+	"opus-cm/organizations/database"
 )
 
 // TODO: need to implement disconnet on SIGTERM/SIGINT to avoid clientID duplicate registrations
 
 func main() {
-	app := fiber.New()
+	c := config.Init()
+
+	db := database.Init(c.PGConnString)
+	database.Migrate(db)
+
 	sc := &nats.Client{}
 	sc.Connect()
 
+	app := fiber.New()
 	testHandler := &testHandler{}
 	testListener := &events.Listener{
-		QueueGroupName: "organizations-service",
-		AckWait:        time.Duration(5) * time.Second,
+		QueueGroupName: c.QueueGroupName,
+		AckWait:        c.AckWait,
 		Client:         sc,
 		Subject:        "user:created",
 		Handler:        testHandler,
@@ -39,7 +45,7 @@ func main() {
 		return c.JSON(fiber.Map{"test": "this works"})
 	})
 
-	app.Post("/new", routes.CreateOrganization)
+	app.Post("/", routes.CreateOrganization)
 
 	app.Listen(":3000")
 }

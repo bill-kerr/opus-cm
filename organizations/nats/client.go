@@ -3,6 +3,7 @@ package nats
 import (
 	"fmt"
 	"log"
+	"opus-cm/organizations/config"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/nats-io/stan.go"
@@ -23,7 +24,8 @@ func (c *Client) onClose() {
 
 // Connect is the function that users must run to connect to the NATS Streaming Server service
 func (c *Client) Connect() {
-	sc, err := stan.Connect("opuscm", "organizations", stan.NatsURL("http://nats-srv:4222"))
+	conf := config.GetConfig()
+	sc, err := stan.Connect(conf.NATSClusterID, conf.NATSClientID, stan.NatsURL(conf.NATSURL))
 	if err != nil {
 		log.Fatalln(err.Error())
 	}

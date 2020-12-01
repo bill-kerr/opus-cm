@@ -2,7 +2,7 @@ package events
 
 import (
 	"fmt"
-	"opus-cm/organizations/src/nats"
+	"opus-cm/organizations/nats"
 )
 
 // Publisher represents an object that can publish events to the NATS server.

@@ -17,6 +17,39 @@ spec:
       containers:
         - name: organizations
           image: bk7987/opuscm-organizations
+          env:
+            - name: GOOGLE_APPLICATION_CREDENTIALS
+              value: './secrets/firebase-admin-config.json'
+            - name: NATS_URL
+              value: 'http://nats-srv:4222'
+            - name: NATS_CLUSTER_ID
+              valueFrom:
+                secretKeyRef:
+                  name: nats-cluster-id
+                  key: NATS_CLUSTER_ID
+            - name: NATS_CLIENT_ID
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: NATS_QUEUE_GROUP
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: PG_USER
+              valueFrom:
+                secretKeyRef:
+                  name: pg-user
+                  key: PG_USER
+            - name: PG_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: pg-password
+                  key: PG_PASSWORD
+            - name: PG_DATABASE
+              value: organizations
+            - name: PG_HOST
+              value: 'organizations-db-srv'
+
 ---
 kind: Service
 apiVersion: v1

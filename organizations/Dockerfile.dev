@@ -6,4 +6,4 @@ COPY ./go.mod ./
 RUN go mod download
 COPY ./ ./
 
-ENTRYPOINT CompileDaemon --build="go build -o server src/main.go" --command=./server
+ENTRYPOINT CompileDaemon --build="go build -o server main.go" --command=./server

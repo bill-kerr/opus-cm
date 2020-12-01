@@ -1,7 +1,7 @@
 package events
 
 import (
-	"opus-cm/organizations/src/nats"
+	"opus-cm/organizations/nats"
 	"time"
 
 	"github.com/nats-io/stan.go"

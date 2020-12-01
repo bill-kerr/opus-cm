@@ -22,6 +22,8 @@ spec:
           env:
             - name: GOOGLE_APPLICATION_CREDENTIALS
               value: './secrets/firebase-admin-config.json'
+            - name: NATS_URL
+              value: 'http://nats-srv:4222'
       volumes:
         - name: firebase-config
           secret:

@@ -4,6 +4,17 @@
 
 Opus CM is an open source construction project management platform built on asynchronous microservices. Opus utilizes [NATS Streaming Server](https://docs.nats.io/) as a central event bus for message-based communication between services.
 
+## **Services**
+
+Opus CM is organized around multiple services. Each "microservice" is responsible for a small portion of the system and communicates with other services via a pub/sub pattern, using a central event bus as a message broker. Below is the list of services that Opus CM is built on.
+
+| Service | Description |
+| ------- | ----------- |
+| Users Service | The Users Service controls user registration, password management, and role management.
+| Organizations Service | The Organizations Service controls all functionality for creating, reading, updating, and deleting organizations.
+| Notifications Service | The Notifications Service is responsible for dispatching all notifications to users. For now, notifications are only dispatched as emails.
+| Submittals Service | The Submittals Service controls all CRUD operations for submittals. |
+
 ## **Events**
 
 Events consist of a subject and a payload. Publishers dispatch events with a subject and subscribers to that subject receive the event and its payload. Subscribers belong to a "queue group" which tells the event bus that only one of the subscribers in a given queue group is to receive the event. All payload data is transfered as a single string and must be sent as and parsed to JSON data structures.

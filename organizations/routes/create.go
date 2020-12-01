@@ -1,10 +1,10 @@
 package routes
 
 import (
-	"opus-cm/organizations/src/events"
-	"opus-cm/organizations/src/exceptions"
-	"opus-cm/organizations/src/models"
-	"opus-cm/organizations/src/nats"
+	"opus-cm/organizations/events"
+	"opus-cm/organizations/exceptions"
+	"opus-cm/organizations/models"
+	"opus-cm/organizations/nats"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofrs/uuid"
