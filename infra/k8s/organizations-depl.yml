@@ -17,6 +17,10 @@ spec:
       containers:
         - name: organizations
           image: bk7987/opuscm-organizations
+          volumeMounts:
+            - name: firebase-config
+              mountPath: '/app/secrets'
+              readOnly: true
           env:
             - name: GOOGLE_APPLICATION_CREDENTIALS
               value: './secrets/firebase-admin-config.json'
@@ -49,6 +53,10 @@ spec:
               value: organizations
             - name: PG_HOST
               value: 'organizations-db-srv'
+      volumes:
+        - name: firebase-config
+          secret:
+            secretName: firebase-config
 
 ---
 kind: Service

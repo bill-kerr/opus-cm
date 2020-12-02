@@ -6,11 +6,12 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/nats-io/stan.go"
 
+	"opus-cm/organizations/auth"
 	"opus-cm/organizations/config"
+	"opus-cm/organizations/database"
 	"opus-cm/organizations/events"
 	"opus-cm/organizations/nats"
 	"opus-cm/organizations/routes"
-	"opus-cm/organizations/database"
 )
 
 // TODO: need to implement disconnet on SIGTERM/SIGINT to avoid clientID duplicate registrations
@@ -24,6 +25,8 @@ func main() {
 	sc := &nats.Client{}
 	sc.Connect()
 
+	auth.Init()
+
 	app := fiber.New()
 	testHandler := &testHandler{}
 	testListener := &events.Listener{
@@ -35,6 +38,7 @@ func main() {
 	}
 	testListener.Listen()
 
+	app.Use(auth.RequireAuth)
 	app.Use(nats.ClientProvider(sc))
 
 	app.Get("/", func(c *fiber.Ctx) error {
