@@ -8,7 +8,7 @@ const defaultError: ErrorResponse = {
   details: 'An unknown error occurred',
 };
 
-export function errorHandler(err: Error, req: Request, res: Response, _next: NextFunction) {
+export function errorHandler(err: Error, _req: Request, res: Response, _next: NextFunction) {
   if (err instanceof BaseError) {
     const errorResponse: ErrorResponse = {
       object: 'error',
@@ -30,5 +30,5 @@ export function errorHandler(err: Error, req: Request, res: Response, _next: Nex
   }
 
   console.error(err);
-  res.status(defaultError.statusCode).json(defaultError);
+  return res.status(defaultError.statusCode).json(defaultError);
 }

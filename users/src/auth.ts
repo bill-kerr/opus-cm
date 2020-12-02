@@ -1,7 +1,12 @@
 import { NextFunction, Request, Response } from 'express';
 import firebase from 'firebase-admin';
 import { v4 } from 'uuid';
-import { BadRequestError, InternalServerError, UnauthorizedError } from './errors/errors';
+import {
+  BadRequestError,
+  InsufficientPermissionsError,
+  InternalServerError,
+  UnauthorizedError,
+} from './errors/errors';
 import { Role } from './models/role';
 import { User } from './models/user';
 
@@ -60,18 +65,26 @@ export async function requireAuth(req: Request, _res: Response, next: NextFuncti
     );
   }
 
-  let user;
+  let token: firebase.auth.DecodedIdToken;
   try {
-    user = await firebase.auth().verifyIdToken(authToken);
+    token = await firebase.auth().verifyIdToken(authToken);
   } catch (err) {
     throw new UnauthorizedError('The provided authentication token is not valid.');
   }
 
-  if (!user) {
+  if (!token) {
     throw new UnauthorizedError('You are not authorized to access this resource.');
   }
 
-  req.userId = user.uid;
+  req.userId = token.uid;
+  req.userRole = (await getClaims(token.uid)).role;
+  next();
+}
+
+export async function requireAdmin(req: Request, _res: Response, next: NextFunction) {
+  if (req.userRole !== Role.SYS_ADMIN) {
+    throw new InsufficientPermissionsError();
+  }
   next();
 }
 

@@ -66,3 +66,15 @@ export class UnauthorizedError extends BaseError {
     Object.setPrototypeOf(this, UnauthorizedError.prototype);
   }
 }
+
+export class InsufficientPermissionsError extends BaseError {
+  statusCode = 403;
+  name = 'Insufficient permissions error';
+
+  constructor(
+    public details: string = 'You do not have the requisite permissions to perform this operation.'
+  ) {
+    super(details);
+    Object.setPrototypeOf(this, InsufficientPermissionsError.prototype);
+  }
+}

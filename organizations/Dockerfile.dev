@@ -1,9 +1,10 @@
 FROM golang:latest
 
 WORKDIR /app
-RUN go get github.com/githubnemo/CompileDaemon
+# RUN go get github.com/githubnemo/CompileDaemon
 COPY ./go.mod ./
 RUN go mod download
 COPY ./ ./
 
-ENTRYPOINT CompileDaemon --build="go build -o server main.go" --command=./server
+# ENTRYPOINT CompileDaemon --build="go build -o server main.go" --command=./server
+ENTRYPOINT ["go", "run", "main.go"]
