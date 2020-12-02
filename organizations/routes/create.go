@@ -5,6 +5,7 @@ import (
 	"opus-cm/organizations/exceptions"
 	"opus-cm/organizations/models"
 	"opus-cm/organizations/nats"
+	"opus-cm/organizations/validation"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofrs/uuid"
@@ -15,6 +16,9 @@ func CreateOrganization(ctx *fiber.Ctx) error {
 	data := models.OrganizationCreate{}
 	if err := ctx.BodyParser(&data); err != nil {
 		return exceptions.BadRequestError(ctx, exceptions.NewErrorDetail("Bad Request Error", "Could not parse body"))
+	}
+	if err := validation.Validate(data, ctx); err != nil {
+		return exceptions.BadRequestError(ctx, err...);
 	}
 
 	ID, _ := uuid.NewV4()

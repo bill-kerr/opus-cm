@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/recover"
 	"github.com/nats-io/stan.go"
 
 	"opus-cm/organizations/auth"
@@ -28,6 +29,7 @@ func main() {
 	auth.Init()
 
 	app := fiber.New()
+	app.Use(recover.New())
 	testHandler := &testHandler{}
 	testListener := &events.Listener{
 		QueueGroupName: c.QueueGroupName,

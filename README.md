@@ -54,11 +54,11 @@ Like successful HTTP responses, returned errors must conform to a common definit
 
 Opus CM requires some global environmental variables to be exposed to each service. Below is the list of required environmental variables. These variables are exposed to each service through Kubernetes secrets. Specific services may require additional environmental variables.
 
-| Secret Name | Type | Description |
-| ----------- | ---- | ----------- |
-| firebase-config | file | This secret points to a volume containing the Google application credentials required for initializing the authenticaion capabilities of Firebase. |
-| pg-user | literal | This secret contains the username to be used for all PostgreSQL database connections across the application. Exposed with key of "PG_USER" |
-| pg-password | literal | This secret contains the password to be used for all PostgreSQL database connections across the application. Exposed with key of "PG_PASSWORD" |
-| nats-cluster-id | literal | This secret contains the cluster name used by the NATS Streaming Server event bus. All "clients" must connect to this cluster. Exposed with key of "NATS_CLUSTER_ID" |
+| Secret Name | Type | Key | Description |
+| ----------- | ---- | --- | ----------- |
+| firebase-config | file | n/a | This secret points to a volume containing the Google application credentials required for initializing the authenticaion capabilities of Firebase. |
+| pg-user | literal | PG_USER | This secret contains the username to be used for all PostgreSQL database connections across the application. |
+| pg-password | literal | PG_PASSWORD | This secret contains the password to be used for all PostgreSQL database connections across the application. |
+| nats-cluster-id | literal | NATS_CLUSTER_ID | This secret contains the cluster name used by the NATS Streaming Server event bus. All "clients" must connect to this cluster. |
 
 <!-- prettier-ignore-end -->

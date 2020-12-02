@@ -5,6 +5,7 @@ go 1.15
 require (
 	cloud.google.com/go/firestore v1.3.0 // indirect
 	firebase.google.com/go/v4 v4.1.0
+	github.com/go-playground/validator/v10 v10.4.1
 	github.com/gofiber/fiber/v2 v2.2.0
 	github.com/gofrs/uuid v3.3.0+incompatible
 	github.com/golang/protobuf v1.4.3 // indirect
