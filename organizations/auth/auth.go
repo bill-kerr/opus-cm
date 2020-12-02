@@ -6,6 +6,7 @@ import (
 	"log"
 
 	firebase "firebase.google.com/go/v4"
+	"firebase.google.com/go/v4/auth"
 )
 
 var app *firebase.App
@@ -20,16 +21,16 @@ func Init() {
 }
 
 // VerifyToken verifies the string token with the Firebase authenticaion client.
-func VerifyToken(token string) error {
+func VerifyToken(token string) (*auth.Token, error) {
 	ctx := context.Background()
 	client, err := app.Auth(ctx)
 	if err != nil {
-		return err
+		return &auth.Token{}, err
 	}
 
-	_, err = client.VerifyIDToken(ctx, token)
+	authToken, err := client.VerifyIDToken(ctx, token)
 	if err != nil {
-		return errors.New("ID token verification failed")
+		return &auth.Token{}, errors.New("ID token verification failed")
 	}
-	return nil
+	return authToken, nil
 }

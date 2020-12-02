@@ -8,7 +8,6 @@ import (
 	"opus-cm/organizations/validation"
 
 	"github.com/gofiber/fiber/v2"
-	"github.com/gofrs/uuid"
 )
 
 // CreateOrganization creates an organization and saves it to the database.
@@ -18,19 +17,21 @@ func CreateOrganization(ctx *fiber.Ctx) error {
 		return exceptions.BadRequestError(ctx, exceptions.NewErrorDetail("Bad Request Error", "Could not parse body"))
 	}
 	if err := validation.Validate(data, ctx); err != nil {
-		return exceptions.BadRequestError(ctx, err...);
+		return exceptions.BadRequestError(ctx, err...)
+	}
+	org := models.NewOrganization(data.Name)
+
+	if _, err := models.FindOne(models.Organization{Name: data.Name}); err == nil {
+		return exceptions.BadRequestError(ctx, exceptions.NewErrorDetail("Bad request error", "An organization with that name already exists."))
+	}
+	if err := org.Save(); err != nil {
+		return exceptions.InternalServerError(ctx)
 	}
 
-	ID, _ := uuid.NewV4()
-	org := models.Organization{
-		ID:      ID.String(),
-		Name:    "this is the org name",
-		Version: 1,
-	}
 	publisher := events.Publisher{
-		Subject: "test",
+		Subject: events.SubjectOrganizationCreated,
 		Client:  nats.GetClient(ctx),
-		Object:  org,
+		Payload: org,
 	}
 	publisher.Publish()
 	return ctx.Status(201).JSON(org)

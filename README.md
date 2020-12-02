@@ -2,7 +2,7 @@
 
 # **Opus CM**
 
-Opus CM is an open source construction project management platform built on asynchronous microservices. Opus utilizes [NATS Streaming Server](https://docs.nats.io/) as a central event bus for message-based communication between services.
+Opus CM is an open source construction project management platform built on asynchronous microservices. Opus utilizes [NATS Streaming Server](https://docs.nats.io/) as a central event bus for message-based communication between services and [Kubernetes](https://https://kubernetes.io/) for container orchestration.
 
 ## **Services**
 
@@ -10,9 +10,9 @@ Opus CM is organized around multiple services. Each "microservice" is responsibl
 
 | Service | Description |
 | ------- | ----------- |
-| Users Service | The Users Service controls user registration, password management, and role management.
-| Organizations Service | The Organizations Service controls all functionality for creating, reading, updating, and deleting organizations.
-| Notifications Service | The Notifications Service is responsible for dispatching all notifications to users. For now, notifications are only dispatched as emails.
+| Users Service | The Users Service controls user registration, password management, and role management. |
+| Organizations Service | The Organizations Service controls all functionality for creating, reading, updating, and deleting organizations. |
+| Notifications Service | The Notifications Service is responsible for dispatching all notifications to users. For now, notifications are only dispatched as emails. |
 | Submittals Service | The Submittals Service controls all CRUD operations for submittals. |
 
 ## **Events**
@@ -25,8 +25,9 @@ It is necessary to define common data structures that each service can understan
 
 | Type | Structure |
 | --------- | --------- |
-| User | ``` { id: uuid, email: string, role: Role } ```
-| Role | ``` SYS_ADMIN, PRJ_ADMIN, PRJ_USER (default) ```
+| User | ``` { id: uuid, email: string, role: Role } ``` |
+| Role | ``` SYS_ADMIN, PRJ_ADMIN, PRJ_USER (default) ``` |
+| Organization | ``` {} ``` |
 
 ### **Event List**
 
@@ -34,9 +35,12 @@ Below is a table of events, with their subjects and payload structures.
 
 | Subject | Payload |
 | ------- | ------- |
-| user:created | ``` User ```
-| user:updated | ``` User ```
-| user:role_changed | ``` { id: uuid, role: Role } ```
+| user:created | ``` User ``` |
+| user:updated | ``` User ``` |
+| user:role_changed | ``` { id: uuid, role: Role } ``` |
+| organization:created | ``` Organization ``` |
+| organization:updated | ``` Organization ``` |
+| organization:deleted | ``` { id: uuid } ``` |
 
 ## **HTTP Responses**
 

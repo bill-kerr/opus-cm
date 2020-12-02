@@ -22,3 +22,9 @@ func BadRequestError(ctx *fiber.Ctx, details ...ErrorDetail) error {
 	return ctx.Status(response.StatusCode).JSON(response)
 }
 
+// InsufficientPermissionsError returns a 403 error indicating that the user does not have sufficient permissions to perform the operation.
+func InsufficientPermissionsError(ctx *fiber.Ctx) error {
+	detail := NewErrorDetail("Insufficient permissions", "You do not have the requisite permissions to perform this operation.")
+	response := NewErrorResponse(detail, 403)
+	return ctx.Status(response.StatusCode).JSON(response)
+}

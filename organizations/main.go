@@ -6,11 +6,13 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/recover"
 	"github.com/nats-io/stan.go"
+	"gorm.io/gorm"
 
 	"opus-cm/organizations/auth"
 	"opus-cm/organizations/config"
 	"opus-cm/organizations/database"
 	"opus-cm/organizations/events"
+	"opus-cm/organizations/models"
 	"opus-cm/organizations/nats"
 	"opus-cm/organizations/routes"
 )
@@ -21,7 +23,7 @@ func main() {
 	c := config.Init()
 
 	db := database.Init(c.PGConnString)
-	database.Migrate(db)
+	migrate(db)
 
 	sc := &nats.Client{}
 	sc.Connect()
@@ -41,6 +43,7 @@ func main() {
 	testListener.Listen()
 
 	app.Use(auth.RequireAuth)
+	app.Use(auth.RequireAdmin)
 	app.Use(nats.ClientProvider(sc))
 
 	app.Get("/", func(c *fiber.Ctx) error {
@@ -67,4 +70,8 @@ func (t *testHandler) Parse(msg *stan.Msg) {
 		return
 	}
 	fmt.Printf("Message received in the organizations service: %s\n", message)
+}
+
+func migrate(db *gorm.DB) {
+	db.AutoMigrate(&models.Organization{})
 }
