@@ -17,6 +17,7 @@ spec:
       containers:
         - name: organizations
           image: bk7987/opuscm-organizations
+          imagePullPolicy: IfNotPresent
           volumeMounts:
             - name: firebase-config
               mountPath: '/app/secrets'

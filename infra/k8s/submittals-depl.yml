@@ -17,6 +17,7 @@ spec:
       containers:
         - name: submittals
           image: bk7987/opuscm-submittals
+          imagePullPolicy: IfNotPresent
 ---
 kind: Service
 apiVersion: v1

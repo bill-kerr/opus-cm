@@ -17,6 +17,7 @@ spec:
       containers:
         - name: notifications
           image: bk7987/opuscm-notifications
+          imagePullPolicy: IfNotPresent
 ---
 kind: Service
 apiVersion: v1

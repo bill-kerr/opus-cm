@@ -18,22 +18,22 @@ build:
         manual:
           - src: 'src/**/*.ts'
             dest: .
-    - image: bk7987/opuscm-submittals
-      context: submittals
-      docker:
-        dockerfile: Dockerfile.dev
-      sync:
-        manual:
-          - src: 'src/**/*.py'
-            dest: .
-    - image: bk7987/opuscm-notifications
-      context: notifications
-      docker:
-        dockerfile: dev.Dockerfile
-      sync:
-        manual:
-          - src: 'src/**/*.go'
-            dest: .
+    # - image: bk7987/opuscm-submittals
+    #   context: submittals
+    #   docker:
+    #     dockerfile: Dockerfile.dev
+    #   sync:
+    #     manual:
+    #       - src: 'src/**/*.py'
+    #         dest: .
+    # - image: bk7987/opuscm-notifications
+    #   context: notifications
+    #   docker:
+    #     dockerfile: Dockerfile.dev
+    #   sync:
+    #     manual:
+    #       - src: 'src/**/*.go'
+    #         dest: .
     - image: bk7987/opuscm-organizations
       context: organizations
       docker:
