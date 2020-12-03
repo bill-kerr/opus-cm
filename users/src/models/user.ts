@@ -1,6 +1,5 @@
 import { Exclude, Expose, Transform } from 'class-transformer';
-import { IsEmail, IsIn, Length } from 'class-validator';
-import { Role } from './role';
+import { IsBooleanString, IsEmail, Length } from 'class-validator';
 
 @Exclude()
 export class User {
@@ -15,12 +14,12 @@ export class User {
   email: string;
 
   @Expose({ groups: ['http', 'event', 'update'] })
-  @IsIn(Object.values(Role).map(role => role.toString()), {
-    message: "The role field must contain one of 'SYS_ADMIN', 'PRJ_ADMIN', or 'PRJ_USER'",
+  @IsBooleanString({
+    message: 'The admin field must contain a boolean value.',
     groups: ['update'],
   })
-  @Transform((val: string) => val.toUpperCase(), { toClassOnly: true })
-  role: Role;
+  @Transform((val: string) => val.toUpperCase() === 'TRUE', { toClassOnly: true })
+  admin: boolean;
 
   @Expose({ groups: ['create'] })
   @Length(6, undefined, {

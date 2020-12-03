@@ -16,17 +16,7 @@ Opus CM is organized around multiple services. Each "microservice" is responsibl
 <br />
 
 ## **Authentication & Roles**
-Registration and authentication of users is handled by [Firebase](https://firebase.google.com/). Each service will utilize the Firebase Admin client to authenticate incoming requests. Additionally, a custom claim will be embedded in the JWT to define the user's role.
-
-### **Roles**
-The following table lists the roles available in Opus CM.
-
-| Role | Key | Description |
-| :--- | :-- | :---------- |
-| System Admin | SYS_ADMIN | System Admins have permissions to perform any operation. They are the superusers of the application.
-| Project Admin | PRJ_ADMIN | Project Admins are assigned to one or more projects and have full permissions on a project level.
-| Project User | PRJ_USER | Project Users are assigned to one or more projects and have permissions and roles as defined by Project Admins.
-<br />
+Registration and authentication of users is handled by [Firebase](https://firebase.google.com/). Each service will utilize the Firebase Admin client to authenticate incoming requests. Additionally, a custom claim will be embedded in the JWT to define the user's role. This claim will contain a boolean value indicating whether or not the user is a SYS_ADMIN.
 
 ## **Events**
 Events consist of a subject and a payload. Publishers dispatch events with a subject and subscribers to that subject receive the event and its payload. Subscribers belong to a "queue group" which tells the event bus that only one of the subscribers in a given queue group is to receive the event. All payload data is transfered as a single string and must be sent as and parsed to JSON data structures.

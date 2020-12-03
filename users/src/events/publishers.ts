@@ -1,5 +1,5 @@
 import { Stan } from 'node-nats-streaming';
-import { Event, Subject, UserCreatedEvent, UserRoleChangedEvent } from './events';
+import { Event, Subject, UserCreatedEvent, AdminStatusChangedEvent } from './events';
 
 export abstract class Publisher<T extends Event> {
   abstract subject: T['subject'];
@@ -23,6 +23,6 @@ export class UserCreatedPublisher extends Publisher<UserCreatedEvent> {
   subject: Subject.UserCreated = Subject.UserCreated;
 }
 
-export class UserRoleChangedPublisher extends Publisher<UserRoleChangedEvent> {
-  subject: Subject.UserRoleChanged = Subject.UserRoleChanged;
+export class UserAdminStatusChangedPublisher extends Publisher<AdminStatusChangedEvent> {
+  subject: Subject.AdminStatusChanged = Subject.AdminStatusChanged;
 }

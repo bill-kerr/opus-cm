@@ -8,7 +8,6 @@ import {
   NotFoundError,
   UnauthorizedError,
 } from './errors/errors';
-import { Role } from './models/role';
 import { User } from './models/user';
 
 interface FirebaseError {
@@ -17,7 +16,7 @@ interface FirebaseError {
 }
 
 interface UserClaims {
-  role: Role;
+  admin: boolean;
 }
 
 export function initializeFirebase() {
@@ -30,7 +29,7 @@ export function initializeFirebase() {
 export async function createUser(email: string, password: string): Promise<User> {
   try {
     const userRecord = await firebase.auth().createUser({ email, password, uid: v4() });
-    await setRole(userRecord.uid, Role.PROJECT_USER);
+    await setAdmin(userRecord.uid, false);
     return mapUser(userRecord || null);
   } catch (error) {
     handleAuthError(error);
@@ -38,9 +37,9 @@ export async function createUser(email: string, password: string): Promise<User>
   }
 }
 
-export async function setRole(userId: string, role: Role) {
+export async function setAdmin(userId: string, admin: boolean) {
   try {
-    await firebase.auth().setCustomUserClaims(userId, { role });
+    await firebase.auth().setCustomUserClaims(userId, { admin });
   } catch (error) {
     handleAuthError(error, userId);
   }
@@ -81,12 +80,12 @@ export async function requireAuth(req: Request, _res: Response, next: NextFuncti
   }
 
   req.userId = token.uid;
-  req.userRole = (await getClaims(token.uid)).role;
+  req.userIsAdmin = (await getClaims(token.uid)).admin;
   next();
 }
 
 export async function requireAdmin(req: Request, _res: Response, next: NextFunction) {
-  if (req.userRole !== Role.SYS_ADMIN) {
+  if (!req.userIsAdmin) {
     throw new InsufficientPermissionsError();
   }
   next();
@@ -96,16 +95,15 @@ async function mapUser(userRecord: firebase.auth.UserRecord | undefined | null):
   const user = new User();
   user.id = userRecord?.uid || '';
   user.email = userRecord?.email || '';
-  user.role = userRecord ? mapClaims(userRecord.customClaims).role : Role.PROJECT_USER;
+  user.admin = userRecord ? mapClaims(userRecord.customClaims).admin : false;
   return user;
 }
 
 function mapClaims(claims: { [key: string]: any } | undefined): UserClaims {
-  if (!claims || !claims.role) {
-    return { role: Role.PROJECT_USER }; // Or whatever the default should be.
+  if (!claims || claims.admin === undefined || claims.admin === null) {
+    return { admin: false }; // Or whatever the default should be.
   }
-  const role = claims.role as Role;
-  return { role };
+  return { admin: claims.admin as boolean };
 }
 
 function handleAuthError(error: FirebaseError, userId?: string) {

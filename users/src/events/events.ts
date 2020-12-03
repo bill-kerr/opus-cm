@@ -1,4 +1,3 @@
-import { Role } from '../models/role';
 import { User } from '../models/user';
 
 export interface Event {
@@ -6,15 +5,15 @@ export interface Event {
   data: any;
 }
 
-export interface RoleChange {
+export interface AdminStatusChange {
   id: string;
-  role: Role;
+  admin: boolean;
 }
 
 export enum Subject {
   UserCreated = 'user:created',
   UserUpdated = 'user:updated',
-  UserRoleChanged = 'user:role_changed',
+  AdminStatusChanged = 'user:admin_status_changed',
 }
 
 export interface UserCreatedEvent {
@@ -22,7 +21,7 @@ export interface UserCreatedEvent {
   data: User;
 }
 
-export interface UserRoleChangedEvent {
-  subject: Subject.UserRoleChanged;
-  data: RoleChange;
+export interface AdminStatusChangedEvent {
+  subject: Subject.AdminStatusChanged;
+  data: AdminStatusChange;
 }

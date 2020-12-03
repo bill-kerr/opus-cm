@@ -1,5 +1,0 @@
-export enum Role {
-  SYS_ADMIN = 'SYS_ADMIN',
-  PROJECT_ADMIN = 'PRJ_ADMIN',
-  PROJECT_USER = 'PRJ_USER',
-}

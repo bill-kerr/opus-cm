@@ -1,9 +1,8 @@
 import express from 'express';
 import { classToPlain } from 'class-transformer';
-import { createUser, requireAdmin, requireAuth, setRole } from './auth';
+import { createUser, requireAdmin, requireAuth, setAdmin } from './auth';
 import { InternalServerError } from './errors/errors';
-import { UserCreatedPublisher, UserRoleChangedPublisher } from './events/publishers';
-import { Role } from './models/role';
+import { UserCreatedPublisher, UserAdminStatusChangedPublisher } from './events/publishers';
 import { User } from './models/user';
 import { natsWrapper } from './nats-wrapper';
 import { validateBody } from './validators';
@@ -23,18 +22,18 @@ router.post('/', validateBody(User, ['create']), async (req, res) => {
 
 router.put('/:id', requireAuth, requireAdmin, validateBody(User, ['update']), async (req, res) => {
   const userId: string = req.params.id;
-  const newRole: Role = req.body.role;
-  await setRole(userId, newRole);
+  const newAdmin: boolean = req.body.admin;
+  await setAdmin(userId, newAdmin);
 
-  await new UserRoleChangedPublisher(natsWrapper.client).publish({
+  await new UserAdminStatusChangedPublisher(natsWrapper.client).publish({
     id: userId,
-    role: Role.SYS_ADMIN,
+    admin: newAdmin,
   });
   return res.sendStatus(200);
 });
 
 router.post('/superuser', requireAuth, async (req, res) => {
-  await setRole(req.userId, Role.SYS_ADMIN);
+  await setAdmin(req.userId, true);
   res.sendStatus(200);
 });
 

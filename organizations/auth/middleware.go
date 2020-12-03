@@ -21,17 +21,17 @@ func RequireAuth(ctx *fiber.Ctx) error {
 	}
 
 	ctx.Locals("user_id", authToken.UID)
-	if role, ok := authToken.Claims["role"]; ok {
-		ctx.Locals("role", role)
+	if admin, ok := authToken.Claims["admin"]; ok {
+		ctx.Locals("admin", admin)
 	}
 
 	return ctx.Next()
 }
 
-// RequireAdmin is a middleware that requires the SYS_ADMIN role to proceed.
+// RequireAdmin is a middleware that requires that the user be an admin to proceed.
 func RequireAdmin(ctx *fiber.Ctx) error {
-	role := ctx.Locals("role").(string)
-	if role != "SYS_ADMIN" {
+	admin := ctx.Locals("admin").(bool)
+	if !admin {
 		return exceptions.InsufficientPermissionsError(ctx)
 	}
 	return ctx.Next()
