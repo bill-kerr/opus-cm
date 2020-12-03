@@ -2,6 +2,7 @@ package auth
 
 import (
 	"errors"
+	"fmt"
 	"opus-cm/organizations/exceptions"
 	"strings"
 
@@ -21,8 +22,16 @@ func RequireAuth(ctx *fiber.Ctx) error {
 	}
 
 	ctx.Locals("user_id", authToken.UID)
-	if admin, ok := authToken.Claims["admin"]; ok {
-		ctx.Locals("admin", admin)
+	user, err := GetUser(authToken.UID) // TODO: remove this call to GetUser. Allow old permissions to persist until JWT expires. Refresh token on client to update permissions.
+	if err != nil {
+		ctx.Locals("admin", false)
+		return ctx.Next()
+	}
+
+	if admin, ok := user.CustomClaims["admin"]; ok {
+		isAdmin := admin.(bool)
+		fmt.Println(isAdmin)
+		ctx.Locals("admin", isAdmin)
 	}
 
 	return ctx.Next()
@@ -31,6 +40,7 @@ func RequireAuth(ctx *fiber.Ctx) error {
 // RequireAdmin is a middleware that requires that the user be an admin to proceed.
 func RequireAdmin(ctx *fiber.Ctx) error {
 	admin := ctx.Locals("admin").(bool)
+	fmt.Println(admin)
 	if !admin {
 		return exceptions.InsufficientPermissionsError(ctx)
 	}

@@ -80,7 +80,8 @@ export async function requireAuth(req: Request, _res: Response, next: NextFuncti
   }
 
   req.userId = token.uid;
-  req.userIsAdmin = (await getClaims(token.uid)).admin;
+  req.userIsAdmin = token.admin ? token.admin : false;
+  console.log(req.userIsAdmin);
   next();
 }
 

@@ -34,3 +34,18 @@ func VerifyToken(token string) (*auth.Token, error) {
 	}
 	return authToken, nil
 }
+
+// GetUser returns the UserRecord from the Firebase authentication service.
+func GetUser(userID string) (*auth.UserRecord, error) {
+	ctx := context.Background()
+	client, err := app.Auth(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	userRecord, err := client.GetUser(ctx, userID)
+	if err != nil {
+		return nil, err
+	}
+	return userRecord, nil
+}

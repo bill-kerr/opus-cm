@@ -23,7 +23,7 @@ async function start() {
     console.log(req.url, req.baseUrl, req.originalUrl);
     res.send({ message: 'this is the users endpoint' });
   });
-  app.get('/', (_, res) => res.send({ message: 'this is the root endpoint.' }));
+  app.get('/', (_, res) => res.send({ message: 'this is the root endpoint!' }));
 
   try {
     await natsWrapper.connect('opuscm', 'users', 'http://nats-srv:4222');
