@@ -19,11 +19,11 @@ func CreateOrganization(ctx *fiber.Ctx) error {
 	if err := validation.Validate(data, ctx); err != nil {
 		return exceptions.BadRequestError(ctx, err...)
 	}
-	org := models.NewOrganization(data.Name)
-
-	if _, err := models.FindOne(models.Organization{Name: data.Name}); err == nil {
-		return exceptions.BadRequestError(ctx, exceptions.NewErrorDetail("Bad request error", "An organization with that name already exists."))
+	if _, err := models.FindOrganization(models.Organization{Name: data.Name}); err == nil {
+		return exceptions.BadRequestError(ctx, exceptions.NewErrorDetail("Bad Request Error", "An organization with that name already exists."))
 	}
+
+	org := models.NewOrganization(data.Name)
 	if err := org.Save(); err != nil {
 		return exceptions.InternalServerError(ctx)
 	}
@@ -34,5 +34,6 @@ func CreateOrganization(ctx *fiber.Ctx) error {
 		Payload: org,
 	}
 	publisher.Publish()
+
 	return ctx.Status(201).JSON(org)
 }

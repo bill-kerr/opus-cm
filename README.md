@@ -57,7 +57,7 @@ It is necessary to define common data structures that each service can understan
 Responses returned to users are to include the Content-Type header ```application/json```. Keys in the JSON data must be named using camel case.
 
 ### **Object Key**
-Each object in the JSON response should have an "object" key, which will inform the consumer about what type of data to expect.
+Each object in the JSON response should have an "object" key, which will inform the consumer about what type of data to expect. List or array responses should have a key of "list" and an additional key of "data", which contains the array or list of objects.
 
 ### **Errors**
 Like successful HTTP responses, returned errors must conform to a common definition. Below is a list of errors and their default messages. In most cases, the default error message should not be used, and a more specific message should be provided.

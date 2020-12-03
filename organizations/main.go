@@ -46,9 +46,8 @@ func main() {
 	app.Use(auth.RequireAdmin)
 	app.Use(nats.ClientProvider(sc))
 
-	app.Get("/", func(c *fiber.Ctx) error {
-		return c.JSON(fiber.Map{"message": "this is the root route of the organizations service"})
-	})
+	app.Get("/", routes.ListOrganizations)
+	app.Get("/:id", routes.ShowOrganization)
 
 	app.Get("/test", func(c *fiber.Ctx) error {
 		return c.JSON(fiber.Map{"test": "this works"})

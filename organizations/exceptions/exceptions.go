@@ -35,3 +35,13 @@ func UnauthorizedError(ctx *fiber.Ctx, message string) error {
 	response := NewErrorResponse(detail, 401)
 	return ctx.Status(response.StatusCode).JSON(response)
 }
+
+// NotFoundError returns a 404 error indicating that the requested resource was not found.
+func NotFoundError(ctx *fiber.Ctx, message string) error {
+	if message == "" {
+		message = "The requested resource was not found."
+	}
+	detail := NewErrorDetail("Not Found Error", message)
+	response := NewErrorResponse(detail, 404)
+	return ctx.Status(response.StatusCode).JSON(response)
+}
