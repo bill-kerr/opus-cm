@@ -4,7 +4,7 @@ import { BaseError, ErrorDetail } from './types';
 
 export class InternalServerError extends BaseError {
   statusCode = 500;
-  name = 'Internal server error';
+  name = 'Internal Server Error';
 
   constructor(public details = 'An unknown error occurred.') {
     super(details);
@@ -14,7 +14,7 @@ export class InternalServerError extends BaseError {
 
 export class ValidationError extends BaseError {
   statusCode = 400;
-  name = 'Bad request';
+  name = 'Bad Request Error';
   details: string | ErrorDetail[];
 
   constructor(private errors: ClassValidationError[]) {
@@ -34,14 +34,14 @@ export class ValidationError extends BaseError {
       this.details = 'An unknown validation error occurred.';
       return;
     }
-    this.name = 'Validation error';
+    this.name = 'Validation Error';
     this.details = messages[0];
   }
 
   private setMultipleErrors(messages: string[]) {
     this.details = messages.map(message => ({
       object: 'error-detail',
-      name: 'Validation error',
+      name: 'Validation Error',
       details: message,
     }));
   }
@@ -49,7 +49,7 @@ export class ValidationError extends BaseError {
 
 export class BadRequestError extends BaseError {
   statusCode = 400;
-  name = 'Bad request error';
+  name = 'Bad Request Error';
 
   constructor(public details: string) {
     super(details);
@@ -59,7 +59,7 @@ export class BadRequestError extends BaseError {
 
 export class UnauthorizedError extends BaseError {
   statusCode = 401;
-  name = 'Unauthorized error';
+  name = 'Unauthorized Error';
 
   constructor(public details: string) {
     super(details);
@@ -69,12 +69,22 @@ export class UnauthorizedError extends BaseError {
 
 export class InsufficientPermissionsError extends BaseError {
   statusCode = 403;
-  name = 'Insufficient permissions error';
+  name = 'Insufficient Permissions Error';
 
   constructor(
     public details: string = 'You do not have the requisite permissions to perform this operation.'
   ) {
     super(details);
     Object.setPrototypeOf(this, InsufficientPermissionsError.prototype);
+  }
+}
+
+export class NotFoundError extends BaseError {
+  statusCode = 404;
+  name = 'Not Found Error';
+
+  constructor(public details: string = 'The requested resource was not found.') {
+    super(details);
+    Object.setPrototypeOf(this, NotFoundError.prototype);
   }
 }

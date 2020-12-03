@@ -5,6 +5,7 @@ import {
   BadRequestError,
   InsufficientPermissionsError,
   InternalServerError,
+  NotFoundError,
   UnauthorizedError,
 } from './errors/errors';
 import { Role } from './models/role';
@@ -37,19 +38,22 @@ export async function createUser(email: string, password: string): Promise<User>
   }
 }
 
-export async function setRole(userId: string, role: Role): Promise<boolean> {
+export async function setRole(userId: string, role: Role) {
   try {
     await firebase.auth().setCustomUserClaims(userId, { role });
   } catch (error) {
-    handleAuthError(error);
-    return false;
+    handleAuthError(error, userId);
   }
-  return true;
 }
 
 export async function getClaims(userId: string) {
-  const user = await firebase.auth().getUser(userId);
-  return mapClaims(user.customClaims);
+  try {
+    const user = await firebase.auth().getUser(userId);
+    return mapClaims(user.customClaims);
+  } catch (error) {
+    handleAuthError(error, userId);
+    return mapClaims({});
+  }
 }
 
 export async function requireAuth(req: Request, _res: Response, next: NextFunction) {
@@ -92,7 +96,7 @@ async function mapUser(userRecord: firebase.auth.UserRecord | undefined | null):
   const user = new User();
   user.id = userRecord?.uid || '';
   user.email = userRecord?.email || '';
-  user.role = (await getClaims(user.id)).role;
+  user.role = userRecord ? mapClaims(userRecord.customClaims).role : Role.PROJECT_USER;
   return user;
 }
 
@@ -104,12 +108,14 @@ function mapClaims(claims: { [key: string]: any } | undefined): UserClaims {
   return { role };
 }
 
-function handleAuthError(error: FirebaseError) {
+function handleAuthError(error: FirebaseError, userId?: string) {
   switch (error.errorInfo.code) {
     case 'auth/email-already-exists':
       throw new BadRequestError('A user with that email already exists.');
     case 'auth/invalid-email':
       throw new BadRequestError('Invalid email address.');
+    case 'auth/user-not-found':
+      throw new NotFoundError(`A user with an id of ${userId} does not exist.`);
     default:
       throw new InternalServerError();
   }
