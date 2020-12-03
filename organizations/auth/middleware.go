@@ -17,7 +17,7 @@ func RequireAuth(ctx *fiber.Ctx) error {
 
 	authToken, err := VerifyToken(token)
 	if err != nil {
-		return err
+		return exceptions.UnauthorizedError(ctx, "The provided authentication token is not valid.")
 	}
 
 	ctx.Locals("user_id", authToken.UID)
@@ -39,8 +39,11 @@ func RequireAdmin(ctx *fiber.Ctx) error {
 
 func extractBearerToken(ctx *fiber.Ctx) (string, error) {
 	header := ctx.Get("Authorization")
-	if len(header) > 7 && strings.ToUpper(header[0:7]) == "BEARER " {
+	if header == "" {
+		return "", errors.New("The Authorization header must be set.")
+	}
+	if len(header) > 7 && strings.ToLower(header[0:7]) == "bearer " {
 		return header[7:], nil
 	}
-	return "", errors.New("no 'Bearer ' prefix found")
+	return "", errors.New("The Authorization header must be formatted as 'Bearer <token>' where <token> is a valid auth key.")
 }
