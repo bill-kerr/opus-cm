@@ -19,10 +19,7 @@ class NatsClient:
         print("Connected to NATS")
 
     async def subscribe(self, on_message):
-        future = asyncio.Future(loop=self.__loop)
-        sub = await self.__sc.subscribe("user:created", start_at="first", cb=on_message(future))
-        await asyncio.wait_for(future, 1, loop=self.__loop)
-        await sub.unsubscribe()
+        return await self.__sc.subscribe("user:created", start_at="first", cb=on_message)
 
     async def publish(self):
         await self.__sc.publish("test", b"this is a test from the submittals service")

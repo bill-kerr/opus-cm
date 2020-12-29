@@ -25,6 +25,11 @@ async function start() {
   });
   app.get('/', (_, res) => res.send({ message: 'this is the root endpoint!' }));
 
+  app.get('/test', (_, res) => {
+    natsWrapper.client.publish('test', 'this is a test!');
+    res.sendStatus(200);
+  });
+
   try {
     await natsWrapper.connect('opuscm', 'users', 'http://nats-srv:4222');
   } catch (error) {
@@ -33,6 +38,9 @@ async function start() {
 
   const subscription = natsWrapper.client.subscribe('user:created');
   subscription.on('message', msg => console.log(msg.getData()));
+
+  const sub = natsWrapper.client.subscribe('test');
+  sub.on('message', msg => console.log(msg.getData()));
 
   app.use(errorHandler);
   app.listen(3000, () => console.log('Users service listening on port 3000.'));
