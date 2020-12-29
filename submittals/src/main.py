@@ -9,10 +9,12 @@ app = FastAPI()
 
 @app.on_event('startup')
 async def startup():
-    # loop = asyncio.get_event_loop()
-    # client = NatsClient(loop)
-    # await client.connect()
-    # await client.subscribe(on_message)
+    loop = asyncio.get_event_loop()
+    client = NatsClient(loop)
+    await client.connect()
+    print("Hello from before subscribe")
+    loop.create_task(client.subscribe(on_message))
+    print("Hello from after subscribe")
     pass
 
 
@@ -26,5 +28,8 @@ async def read_root():
     return {"message": "this is the root route of submittals!"}
 
 
-def on_message(msg):
-    print(msg.seq, msg.data)
+def on_message(future):
+    def callback(msg):
+        print(msg.seq, msg.data)
+        future.set_result(None)
+    return callback

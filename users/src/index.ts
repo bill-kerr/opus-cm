@@ -31,7 +31,7 @@ async function start() {
     console.error(error);
   }
 
-  const subscription = natsWrapper.client.subscribe('test');
+  const subscription = natsWrapper.client.subscribe('user:created');
   subscription.on('message', msg => console.log(msg.getData()));
 
   app.use(errorHandler);
